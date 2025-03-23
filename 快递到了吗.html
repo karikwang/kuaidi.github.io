@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>快递到了吗 - 原型设计</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .prototype-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      .screen {
+        width: 320px;
+        height: 580px;
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .screen-title {
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: #666;
+      }
+
+      .header {
+        height: 44px;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .header-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .back-button {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #576b95;
+        font-size: 14px;
+      }
+
+      .right-button {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #576b95;
+        font-size: 14px;
+      }
+
+      .content {
+        padding: 15px;
+        height: calc(100% - 88px);
+        overflow-y: auto;
+      }
+
+      .tabbar {
+        height: 44px;
+        background-color: #f7f7f7;
+        display: flex;
+        border-top: 1px solid #e5e5e5;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+      }
+
+      .tab-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: #999;
+      }
+
+      .tab-item.active {
+        color: #07c160;
+      }
+
+      .tab-icon {
+        font-size: 18px;
+        margin-bottom: 3px;
+      }
+
+      .package-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .package-item {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        padding: 15px;
+      }
+
+      .package-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .courier-name {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .package-status {
+        font-size: 13px;
+        padding: 3px 8px;
+        border-radius: 10px;
+      }
+
+      .status-delivered {
+        background-color: #e8f6e8;
+        color: #07c160;
+      }
+
+      .status-transit {
+        background-color: #ebf5ff;
+        color: #576b95;
+      }
+
+      .status-pending {
+        background-color: #f3f3f3;
+        color: #999;
+      }
+
+      .package-info {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .package-footer {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #999;
+      }
+
+      .primary-button {
+        background-color: #07c160;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e5e5e5;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e5e5e5;
+        border-radius: 5px;
+        font-size: 14px;
+        background-color: white;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        border-radius: 20px;
+        transition: 0.4s;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.4s;
+      }
+
+      input:checked + .slider {
+        background-color: #07c160;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f3f3f3;
+      }
+
+      .setting-label {
+        font-size: 16px;
+        color: #333;
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #999;
+        text-align: center;
+      }
+
+      .empty-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+        color: #e0e0e0;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 20px 0 10px;
+      }
+
+      .detail-block {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .timeline {
+        margin-top: 20px;
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 20px;
+        padding-bottom: 20px;
+        border-left: 1px solid #e5e5e5;
+        margin-left: 10px;
+      }
+
+      .timeline-item:last-child {
+        border-left: none;
+      }
+
+      .timeline-point {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #07c160;
+        left: -5px;
+        top: 6px;
+      }
+
+      .timeline-point.gray {
+        background-color: #ccc;
+      }
+
+      .timeline-content {
+        padding-left: 15px;
+      }
+
+      .timeline-time {
+        font-size: 12px;
+        color: #999;
+        margin-bottom: 5px;
+      }
+
+      .timeline-text {
+        font-size: 14px;
+        color: #333;
+      }
+
+      .add-button {
+        position: fixed;
+        bottom: 74px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #07c160;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 3px 10px rgba(7, 193, 96, 0.3);
+      }
+
+      .search-bar {
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        margin-bottom: 15px;
+      }
+
+      .search-icon {
+        color: #999;
+        margin-right: 8px;
+      }
+
+      .search-input {
+        border: none;
+        background: transparent;
+        flex: 1;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #999;
+        margin-bottom: 15px;
+        overflow: hidden;
+      }
+
+      .notification {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background-color: rgba(7, 193, 96, 0.8);
+        color: white;
+        padding: 10px 15px;
+        font-size: 14px;
+        text-align: center;
+        transform: translateY(-100px);
+        animation: slideDown 0.3s forwards;
+      }
+
+      @keyframes slideDown {
+        to {
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>「快递到了吗」微信小程序原型设计</h1>
+    <p>基于"减少快递通知打扰"的产品定位，设计了以下核心界面</p>
+
+    <div class="prototype-container">
+      <!-- 首页/快递列表页 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="header-title">快递到了吗</div>
+            <div class="right-button"><i class="fas fa-filter"></i></div>
+          </div>
+          <div class="content">
+            <div class="search-bar">
+              <span class="search-icon"><i class="fas fa-search"></i></span>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="搜索快递单号、商品名称"
+              />
+            </div>
+            <div class="package-list">
+              <div class="package-item">
+                <div class="package-header">
+                  <div class="courier-name">顺丰速运</div>
+                  <div class="package-status status-delivered">已送达</div>
+                </div>
+                <div class="package-info">
+                  物品已签收，感谢使用顺丰，期待再次为您服务
+                </div>
+                <div class="package-footer">
+                  <div>2023-04-10 10:23</div>
+                  <div>SF1234567890</div>
+                </div>
+              </div>
+
+              <div class="package-item">
+                <div class="package-header">
+                  <div class="courier-name">京东物流</div>
+                  <div class="package-status status-transit">运输中</div>
+                </div>
+                <div class="package-info">
+                  【北京市】您的快件已到达XXX营业点，正在派送中
+                </div>
+                <div class="package-footer">
+                  <div>2023-04-09 18:45</div>
+                  <div>JD9876543210</div>
+                </div>
+              </div>
+
+              <div class="package-item">
+                <div class="package-header">
+                  <div class="courier-name">中通快递</div>
+                  <div class="package-status status-pending">已揽收</div>
+                </div>
+                <div class="package-info">
+                  【杭州市】快件已从杭州转运中心发出，准备发往北京
+                </div>
+                <div class="package-footer">
+                  <div>2023-04-08 09:12</div>
+                  <div>ZT1122334455</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="add-button"><i class="fas fa-plus"></i></div>
+          <div class="tabbar">
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">首页/快递列表</div>
+      </div>
+
+      <!-- 添加快递页面 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="back-button">
+              <i class="fas fa-chevron-left"></i> 返回
+            </div>
+            <div class="header-title">添加快递</div>
+          </div>
+          <div class="content">
+            <div class="form-group">
+              <label class="form-label">快递单号</label>
+              <input
+                type="text"
+                class="form-input"
+                placeholder="请输入或扫描快递单号"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">物流公司</label>
+              <select class="form-select">
+                <option>自动识别</option>
+                <option>顺丰速运</option>
+                <option>京东物流</option>
+                <option>中通快递</option>
+                <option>圆通速递</option>
+                <option>申通快递</option>
+                <option>韵达快递</option>
+                <option>其他</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">备注名称 (选填)</label>
+              <input
+                type="text"
+                class="form-input"
+                placeholder="例如：新手机、办公用品等"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">提醒设置</label>
+              <div class="setting-item">
+                <div class="setting-label">送达后提醒</div>
+                <label class="switch">
+                  <input type="checkbox" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <div class="setting-label">中转站到达提醒</div>
+                <label class="switch">
+                  <input type="checkbox" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <div class="setting-label">派送中提醒</div>
+                <label class="switch">
+                  <input type="checkbox" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <button class="primary-button">确认添加</button>
+          </div>
+        </div>
+        <div class="screen-title">添加快递</div>
+      </div>
+
+      <!-- 快递详情页面 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="back-button">
+              <i class="fas fa-chevron-left"></i> 返回
+            </div>
+            <div class="header-title">快递详情</div>
+            <div class="right-button"><i class="fas fa-ellipsis-v"></i></div>
+          </div>
+          <div class="content">
+            <div class="detail-block">
+              <div class="package-header">
+                <div class="courier-name">京东物流</div>
+                <div class="package-status status-transit">运输中</div>
+              </div>
+              <div class="package-info">
+                <p>单号: JD9876543210</p>
+                <p>备注: 新购置的电脑配件</p>
+              </div>
+            </div>
+
+            <div class="section-title">物流详情</div>
+
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-point"></div>
+                <div class="timeline-content">
+                  <div class="timeline-time">2023-04-09 18:45</div>
+                  <div class="timeline-text">
+                    【北京市】您的快件已到达XXX营业点，正在派送中
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-point gray"></div>
+                <div class="timeline-content">
+                  <div class="timeline-time">2023-04-09 08:30</div>
+                  <div class="timeline-text">
+                    【北京市】您的快件已到达北京转运中心
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-point gray"></div>
+                <div class="timeline-content">
+                  <div class="timeline-time">2023-04-08 19:15</div>
+                  <div class="timeline-text">
+                    【杭州市】您的快件已从杭州转运中心发出
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <div class="timeline-point gray"></div>
+                <div class="timeline-content">
+                  <div class="timeline-time">2023-04-08 12:30</div>
+                  <div class="timeline-text">
+                    【杭州市】您的快件已由XXX揽收，正在送往转运中心
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="setting-item" style="margin-top: 20px">
+              <div class="setting-label">自动删除已送达快递</div>
+              <label class="switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">快递详情</div>
+      </div>
+
+      <!-- 通知设置页面 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="header-title">通知设置</div>
+          </div>
+          <div class="content">
+            <div class="section-title">通知方式</div>
+
+            <div class="setting-item">
+              <div class="setting-label">微信推送通知</div>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">飞书机器人通知</div>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="section-title">通知时机</div>
+
+            <div class="setting-item">
+              <div class="setting-label">快递签收提醒</div>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">快递到达附近提醒</div>
+              <label class="switch">
+                <input type="checkbox" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">快递揽收提醒</div>
+              <label class="switch">
+                <input type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="section-title">查询设置</div>
+
+            <div class="setting-item">
+              <div class="setting-label">查询频率</div>
+              <select class="form-select" style="width: 120px">
+                <option>30分钟</option>
+                <option>1小时</option>
+                <option>2小时</option>
+                <option>4小时</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label">免打扰时段</div>
+              <div style="color: #576b95">
+                设置 <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">通知设置</div>
+      </div>
+
+      <!-- 个人中心页面 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="header-title">个人中心</div>
+          </div>
+          <div
+            class="content"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding-top: 30px;
+            "
+          >
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div
+              style="font-size: 18px; font-weight: bold; margin-bottom: 30px"
+            >
+              微信用户
+            </div>
+
+            <div style="width: 100%">
+              <div class="setting-item">
+                <div class="setting-label">飞书账号绑定</div>
+                <div style="color: #576b95">
+                  已绑定 <i class="fas fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">通知设置</div>
+                <div style="color: #576b95">
+                  <i class="fas fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">数据导入导出</div>
+                <div style="color: #576b95">
+                  <i class="fas fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">关于我们</div>
+                <div style="color: #576b95">
+                  <i class="fas fa-chevron-right"></i>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">清除缓存</div>
+                <div style="color: #999">0.5MB</div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">当前版本</div>
+                <div style="color: #999">v1.0.0</div>
+              </div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">个人中心</div>
+      </div>
+
+      <!-- 空状态页面 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="header-title">快递到了吗</div>
+          </div>
+          <div class="content">
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fas fa-box-open"></i></div>
+              <div style="font-size: 18px; margin-bottom: 10px">
+                暂无快递信息
+              </div>
+              <div style="font-size: 14px; color: #999; margin-bottom: 20px">
+                点击下方"+"按钮添加快递单号
+              </div>
+              <button class="primary-button" style="width: 150px">
+                添加快递
+              </button>
+            </div>
+          </div>
+          <div class="add-button"><i class="fas fa-plus"></i></div>
+          <div class="tabbar">
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">空状态页面</div>
+      </div>
+
+      <!-- 通知到达页面 -->
+      <div>
+        <div class="screen">
+          <div class="header">
+            <div class="header-title">快递到了吗</div>
+          </div>
+          <div class="content">
+            <div class="package-list">
+              <div class="package-item">
+                <div class="package-header">
+                  <div class="courier-name">顺丰速运</div>
+                  <div class="package-status status-delivered">已送达</div>
+                </div>
+                <div class="package-info">
+                  物品已签收，感谢使用顺丰，期待再次为您服务
+                </div>
+                <div class="package-footer">
+                  <div>2023-04-10 10:23</div>
+                  <div>SF1234567890</div>
+                </div>
+              </div>
+
+              <div class="package-item">
+                <div class="package-header">
+                  <div class="courier-name">京东物流</div>
+                  <div class="package-status status-transit">运输中</div>
+                </div>
+                <div class="package-info">
+                  【北京市】您的快件已到达XXX营业点，正在派送中
+                </div>
+                <div class="package-footer">
+                  <div>2023-04-09 18:45</div>
+                  <div>JD9876543210</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="notification">
+            <i class="fas fa-box"></i> 京东快递已到达附近派送点，预计1小时内送达
+          </div>
+          <div class="tabbar">
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-title">通知到达效果</div>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 40px">设计说明</h2>
+    <ul style="line-height: 1.6">
+      <li>
+        <strong>设计理念</strong
+        >：采用简洁、清爽的界面风格，符合微信小程序的设计语言，专注于核心功能—减少快递通知打扰。
+      </li>
+      <li>
+        <strong>首页</strong
+        >：直观展示所有快递信息，通过颜色区分不同状态（已送达、运输中、已揽收等）。
+      </li>
+      <li>
+        <strong>添加快递</strong
+        >：简化输入流程，支持自动识别物流公司，允许用户自定义提醒设置。
+      </li>
+      <li>
+        <strong>快递详情</strong
+        >：展示完整的物流轨迹，突出当前状态，并允许用户设置快递签收后的自动删除。
+      </li>
+      <li>
+        <strong>通知设置</strong>：精细化控制通知方式和时机，减少不必要的打扰。
+      </li>
+      <li><strong>个人中心</strong>：提供账号管理、数据导入导出等功能。</li>
+    </ul>
+
+    <h2 style="margin-top: 30px">实现要点</h2>
+    <ul style="line-height: 1.6">
+      <li>使用飞书多维表格作为数据存储</li>
+      <li>通过定时任务自动查询快递状态</li>
+      <li>精确控制通知时机，减少打扰</li>
+      <li>支持多种通知方式（微信、飞书机器人）</li>
+      <li>智能识别快递是否已送达，提示用户删除记录</li>
+    </ul>
+  </body>
+</html>
