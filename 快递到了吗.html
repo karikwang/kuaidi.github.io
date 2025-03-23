@@ -8,6 +8,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
     <style>
       * {
         margin: 0;
@@ -92,7 +96,7 @@
 
       .content {
         padding: 15px;
-        height: calc(100% - 88px);
+        height: calc(100% - 132px); /* 考虑状态栏+头部+底部导航的总高度 */
         overflow-y: auto;
       }
 
@@ -427,6 +431,52 @@
           transform: translateY(0);
         }
       }
+
+      /* 添加状态栏样式 */
+      .status-bar {
+        height: 44px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        font-size: 14px;
+        color: #000;
+      }
+
+      .status-bar-time {
+        font-weight: 600;
+      }
+
+      .status-bar-icons {
+        display: flex;
+        gap: 5px;
+      }
+
+      /* 个人中心页面样式 */
+      .user-profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .user-profile-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0 20px;
+      }
+
+      .settings-container {
+        width: 100%;
+      }
+
+      /* 调整内容区域高度 */
+      .content {
+        padding: 15px;
+        height: calc(100% - 132px); /* 调整高度以适应状态栏 */
+        overflow-y: auto;
+      }
     </style>
   </head>
   <body>
@@ -437,6 +487,14 @@
       <!-- 首页/快递列表页 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="header-title">快递到了吗</div>
             <div class="right-button"><i class="fas fa-filter"></i></div>
@@ -516,6 +574,14 @@
       <!-- 添加快递页面 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="back-button">
               <i class="fas fa-chevron-left"></i> 返回
@@ -582,6 +648,20 @@
 
             <button class="primary-button">确认添加</button>
           </div>
+          <div class="tabbar">
+            <div class="tab-item active">
+              <div class="tab-icon"><i class="fas fa-box"></i></div>
+              <div>我的快递</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-bell"></i></div>
+              <div>通知</div>
+            </div>
+            <div class="tab-item">
+              <div class="tab-icon"><i class="fas fa-user"></i></div>
+              <div>我的</div>
+            </div>
+          </div>
         </div>
         <div class="screen-title">添加快递</div>
       </div>
@@ -589,6 +669,14 @@
       <!-- 快递详情页面 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="back-button">
               <i class="fas fa-chevron-left"></i> 返回
@@ -681,6 +769,14 @@
       <!-- 通知设置页面 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="header-title">通知设置</div>
           </div>
@@ -769,26 +865,24 @@
       <!-- 个人中心页面 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="header-title">个人中心</div>
           </div>
-          <div
-            class="content"
-            style="
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              padding-top: 30px;
-            "
-          >
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div
-              style="font-size: 18px; font-weight: bold; margin-bottom: 30px"
-            >
-              微信用户
+          <div class="content">
+            <div class="user-profile">
+              <div class="avatar"><i class="fas fa-user"></i></div>
+              <div class="user-profile-name">微信用户</div>
             </div>
 
-            <div style="width: 100%">
+            <div class="settings-container">
               <div class="setting-item">
                 <div class="setting-label">飞书账号绑定</div>
                 <div style="color: #576b95">
@@ -849,6 +943,14 @@
       <!-- 空状态页面 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="header-title">快递到了吗</div>
           </div>
@@ -888,6 +990,14 @@
       <!-- 通知到达页面 -->
       <div>
         <div class="screen">
+          <div class="status-bar">
+            <div class="status-bar-time">14:30</div>
+            <div class="status-bar-icons">
+              <i class="fas fa-signal"></i>
+              <i class="fas fa-wifi"></i>
+              <i class="fas fa-battery-three-quarters"></i>
+            </div>
+          </div>
           <div class="header">
             <div class="header-title">快递到了吗</div>
           </div>
